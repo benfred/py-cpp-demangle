@@ -8,6 +8,7 @@ matrix:
       env:
         - CIBW_SKIP=*manylinux1_i686*
         - PIP=pip
+        - PYTHON=python
     - sudo: required
       services:
         - docker
