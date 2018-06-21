@@ -13,7 +13,8 @@ This package provides python bindings for the rust crate
 a native Python extension using `PyO3 <https://github.com/pyO3/pyO3>`_.
 
 This is mainly an experiment in creating python extensions in Rust.
-More info (and possibly a blog post) coming soon maybe.
+`A blog post about this is here.
+<https://www.benfrederickson.com/writing-python-extensions-in-rust-using-pyo3/>`_
 
 Usage
 -------------------
