@@ -1,4 +1,4 @@
-#![feature(proc_macro, specialization)]
+#![feature(specialization)]
 
 extern crate cpp_demangle;
 extern crate pyo3;
