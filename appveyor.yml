@@ -10,7 +10,7 @@ environment:
     # Nightly 32-bit MSVC
     - channel: nightly
       target: i686-pc-windows-msvc
-      CIBW_SKIP: "*win_amd64* cp33-* cp34-*"
+      CIBW_SKIP: "*win_amd64* cp27-* cp33-* cp34-*"
       CIBW_BEFORE_BUILD: pip install setuptools-rust
 
 
@@ -21,7 +21,7 @@ install:
   - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
   - rustc -vV
   - cargo -vV
-  - pip install cibuildwheel==0.9.1 setuptools_rust
+  - pip install cibuildwheel==0.11.1 setuptools_rust
 
 build_script:
   - cibuildwheel --output-dir wheelhouse
