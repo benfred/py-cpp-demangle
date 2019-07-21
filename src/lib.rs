@@ -1,10 +1,5 @@
-#![feature(specialization)]
-
-extern crate cpp_demangle;
-extern crate pyo3;
-
-use pyo3::py::modinit;
-use pyo3::{Python, PyResult, PyModule, exc};
+use pyo3::prelude::*;
+use pyo3::exceptions;
 
 // This defines a python module. pyo3 will copy the rust doc comment
 // below into a python docstring
@@ -26,9 +21,8 @@ use pyo3::{Python, PyResult, PyModule, exc};
 /// Traceback (most recent call last):
 /// ...
 /// ValueError: mangled symbol is not well-formed
-#[modinit(cpp_demangle)]
-fn init_mod(py: Python, m: &PyModule) -> PyResult<()> {
-
+#[pymodule]
+fn cpp_demangle(_py: Python, m: &PyModule) -> PyResult<()> {
     // This adds a function to the python module:
     /// Demangles a mangled c++ linker symbol name and returns it as a string
     #[pyfn(m, "demangle")]
@@ -38,7 +32,7 @@ fn init_mod(py: Python, m: &PyModule) -> PyResult<()> {
             Ok(sym) => Ok(sym.to_string()),
 
             // on an error, this will raise a python ValueError exception!
-            Err(error) => return Err(exc::ValueError::new(error.to_string()))
+            Err(error) => return Err(exceptions::ValueError::py_err(error.to_string()))
         }
     }
 
