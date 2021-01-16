@@ -1,5 +1,5 @@
 environment:
-  TWINE_USERNAME: benfred
+  TWINE_USERNAME: vlad17
   # Note: TWINE_PASSWORD is set in Appveyor settings
   matrix:
     # Nightly 64-bit MSVC
@@ -12,7 +12,6 @@ environment:
       target: i686-pc-windows-msvc
       CIBW_SKIP: "*win_amd64* cp27-* cp33-* cp34-*"
       CIBW_BEFORE_BUILD: pip install setuptools-rust
-
 
 # from: https://github.com/starkat99/appveyor-rust/blob/master/appveyor.yml
 install:

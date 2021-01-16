@@ -68,3 +68,6 @@ target/
 .ipynb_checkpoints
 
 .vscode/
+
+# emacs
+*~
