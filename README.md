@@ -37,6 +37,7 @@ pip install svm2csr
 * writing SVMlight files
 * `n_features` option
 * `zero_based` option
+* windows builds
 
 All of these are fixable (even stream reading with parallel bridge). Let me know if you'd like to make PR.
 
@@ -46,13 +47,19 @@ TODO
 
 # Dev Info
 
-Dev dependencies are in `dev-requirements.txt`
+Install maturin and pytest first.
 
-Rust side only: use `cargo test` to test.
+```
+pip install maturin pytest
+```
 
-To compile Rust in development mode for testing python bindings: `maturin develop`
+Local development.
 
-To test python: `pytest`
+```
+cargo test # test rust only
+maturin develop # create py bindings for rust code
+pytest # test python bindings
+```
 
 
 

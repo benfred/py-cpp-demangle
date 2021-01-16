@@ -1,5 +1,9 @@
 language: python
-
+python:
+  - 3.9
+  - 3.8
+  - 3.7
+  - 3.6
 matrix:
   include:
     - sudo: required
@@ -7,34 +11,33 @@ matrix:
         - docker
       env:
         - CIBW_SKIP=*manylinux1_i686*
-        - PIP=pip
-        - PYTHON=python
     - sudo: required
       services:
         - docker
       env:
         - CIBW_SKIP=*manylinux1_x86_64*
-        - PIP=pip
-        - PYTHON=python
     - os: osx
       language: generic
       env:
-        - PIP=pip2
-        - PYTHON=python2
+        - CIBW_SKIP=""
 
 env:
   global:
-    - TWINE_USERNAME=benfred
-      # Note: TWINE_PASSWORD is set in Travis settings
+    - TWINE_USERNAME=vlad17
+      # Note: TWINE_PASSWORD is set in Travis settings, but only for master
 
 script:
-  - $PIP install cibuildwheel setuptools_rust
-  - export CIBW_BEFORE_BUILD='pip install setuptools-rust && source {project}/ci/install_rust.sh'
-  - export CIBW_SKIP=cp27-*\ cp33-*\ cp34-*\ $CIBW_SKIP
-  - export CIBW_ENVIRONMENT='PATH="$HOME/.cargo/bin:$PATH"'
-  - cibuildwheel --output-dir wheelhouse
+  - curl -sL https://static.rust-lang.org/rustup.sh -o ~/rust-installer/rustup.sh
+  - sh ~/rust-installer/rustup.sh -y
+  - pip install maturin pytest
+  - source $HOME/.cargo/env
+  - cargo build
+  - cargo test
+  - maturin develop
+  - pytest
+  - maturin build
   - |
-    if [[ $TRAVIS_TAG ]]; then
-      $PIP install twine
-      $PYTHON -m twine upload wheelhouse/*.whl
+    if [[ $TRAVIS_TAG ]] && [ -n "$TWINE_PASSWORD" ]; then
+      pip install twine
+      python -m twine upload target/wheels/*.whl
     fi
