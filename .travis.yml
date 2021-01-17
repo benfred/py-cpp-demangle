@@ -1,10 +1,5 @@
 language: python
-python:
-  - 3.9
-  - 3.8
-  - 3.7
-  - 3.6
-matrix:
+jobs:
   include:
     - sudo: required
       services:
@@ -36,7 +31,10 @@ script:
   - cargo test
   - maturin develop
   - pytest
-  - maturin build
+  - maturin list-python
+  - PYVER=$(python -c 'import sys; print("python{}.{}".format(*sys.version_info[:2]))')
+  - echo $PYVER
+  - maturin build --interpreter $PYVER
   - |
     if [[ $TRAVIS_TAG ]] && [ -n "$TWINE_PASSWORD" ]; then
       pip install twine
