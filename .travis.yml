@@ -1,25 +1,14 @@
 language: python
 jobs:
   include:
-    - sudo: required
+    - os: linux
+      sudo: required
       services:
         - docker
-      env:
-        - CIBW_SKIP=*manylinux1_i686*
-    - sudo: required
-      services:
-        - docker
-      env:
-        - CIBW_SKIP=*manylinux1_x86_64*
     - os: osx
       language: generic
       env:
         - CIBW_SKIP=""
-
-env:
-  global:
-    - TWINE_USERNAME=vlad17
-      # Note: TWINE_PASSWORD is set in Travis settings, but only for master
 
 script:
   - mkdir -p $HOME/rust-installer
