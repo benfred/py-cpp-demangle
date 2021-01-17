@@ -11,6 +11,7 @@ use std::path::PathBuf;
 
 use memchr;
 
+#[derive(Debug)]
 pub struct FileChunk {
     path: PathBuf,
     start: usize,
@@ -76,7 +77,7 @@ pub(crate) fn chunkify(path: &Path, max_chunks: usize) -> Vec<FileChunk> {
         file.seek(SeekFrom::Start(stop.try_into().unwrap()))
             .expect("seek");
         let mut reader = BufReader::new(&mut file);
-        let stop = read_until(b'\n', &mut reader);
+        let stop = stop + read_until(b'\n', &mut reader);
 
         chunks.push(FileChunk {
             path: path.to_owned(),
@@ -123,3 +124,4 @@ fn read_until<R: BufRead + ?Sized>(delim: u8, r: &mut R) -> usize {
 // cross 1, 2, 3, 10 max chunks
 // cross with/without trailing newline
 // cross with/without lots of empty lines (else just mixed length cycle)
+// use tempfile

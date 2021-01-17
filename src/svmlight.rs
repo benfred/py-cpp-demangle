@@ -23,10 +23,10 @@ pub struct CsrMatrix {
 /// Parse svmlight in parallel, relying on a minimum chunk size
 pub fn svmlight_to_csr(fname: &Path, min_chunk_size: usize) -> CsrMatrix {
     // use a few more chunks than threads to allow rayon to load balance naturally
-    let max_chunks = (rayon::current_num_threads() * 4).max(1);
+    let max_chunks = rayon::current_num_threads() * 4;
     let metadata = fs::metadata(fname).unwrap();
     let size: usize = metadata.len().try_into().unwrap();
-    let max_chunks = max_chunks.min(size / min_chunk_size);
+    let max_chunks = max_chunks.min(size / min_chunk_size).max(1);
     let chunks = fileblocks::chunkify(&fname, max_chunks);
 
     let folds: Vec<_> = chunks
@@ -125,6 +125,5 @@ impl<'a> SvmlightLineIter<'a> {
 //
 // simple line-with-target nd line-with-two features parse line test
 //
-// validate empty, one line, two line, two line with no features, and moderate
-// sized end-to-end parse (mutiple chunks) using
-// https://crates.io/crates/tempfile
+// svmlight_to_csr effectively tested by python, no need to repeat here b/c binding
+// is a thin wrapper
