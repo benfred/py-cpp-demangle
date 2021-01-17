@@ -20,7 +20,6 @@ script:
   - cargo test
   - maturin develop
   - pytest
-  - maturin list-python
   - PYVER=$(python -c 'import sys; print("python{}.{}".format(*sys.version_info[:2]))')
   - echo $PYVER
   - maturin build --interpreter $PYVER
