@@ -33,6 +33,7 @@ Note this package is only available for pythons, operating systems, and machine 
 * `dtype` (currently only doubles supported)
 * an svmlight ranking mode where query ids are identified with `qid`
 * comments in svmlight files (start with `#`)
+* empty or blank lines
 * multilabel [extension](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multilabel.html)
 * reading from compressed files
 * reading from multiple files and stacking
