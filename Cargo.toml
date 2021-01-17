@@ -10,6 +10,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 byte-slice-cast = "1.0"
+memchr = "2.3"
+rayon = "1.5"
 
 [dependencies.pyo3]
 version = "0.13"

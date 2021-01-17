@@ -14,3 +14,6 @@ def test_load_binding(tmp_path):
 
 def test_useless():
     pass
+
+# create something programatically multi-chunk
+# validate sklearn equivalence

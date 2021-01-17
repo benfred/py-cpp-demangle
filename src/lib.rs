@@ -1,3 +1,6 @@
+//! SVMLight reader crate with python bindings via PyO3.
+
+mod delim_iter;
 mod fileblocks;
 mod svmlight;
 
@@ -18,14 +21,13 @@ fn py_svm2csr_rs(_py: Python, m: &PyModule) -> PyResult<()> {
 /// Returns a three-tuple of bytes containing (data, indices, indptr) with types
 /// (f8, u8, u8) in native endianness.
 #[pyfunction]
-fn load(py: Python, _fname: String) -> PyResult<PyObject> {
-    let data = vec![1.0f64, 10.0f64, 0.1f64];
-    let indices = vec![1u64, 1u64, 3u64];
-    let indptr = vec![0u64, 1, 3];
+fn load(py: Python, fname: String) -> PyResult<PyObject> {
+    let min_chunk_size = 16 * 1024;
+    let csr = svmlight::svmlight_to_csr(fname.as_ref(), min_chunk_size);
 
-    let data = data.as_byte_slice();
-    let indices = indices.as_byte_slice();
-    let indptr = indptr.as_byte_slice();
+    let data = csr.data.as_byte_slice();
+    let indices = csr.indices.as_byte_slice();
+    let indptr = csr.indptr.as_byte_slice();
 
     Ok((data, indices, indptr).into_py(py))
 }
