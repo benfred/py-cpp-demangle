@@ -1,11 +1,11 @@
 [package]
-name = "svm2csr_rs"
-version = "0.0.1"
+name = "svm2csr"
+version = "0.0.2"
 authors = ["Vladimir Feinberg <vladimir.feinberg@gmail.com>"]
 edition = "2018"
 
 [lib]
-name = "py_svm2csr_rs"
+name = "svm2csr"
 crate-type = ["cdylib"]
 
 [dependencies]
@@ -16,3 +16,12 @@ rayon = "1.5"
 [dependencies.pyo3]
 version = "0.13"
 features = ["extension-module"]
+
+[package.metadata.maturin]
+# keep consistent with requirements.txt
+requires-dist = ["numpy>=0.16", "scipy>=1.5", "scikit-learn>=0.22"]
+maintainer = "Vladimir Feinberg"
+maintainer-email = "vladimir.feinberg@gmail.com"
+project-url = { github = "https://github.com/vlad17/svm2csr" }
+description-content-type = "text/markdown"
+

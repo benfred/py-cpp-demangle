@@ -1,40 +1,26 @@
 language: python
-
-matrix:
+jobs:
   include:
-    - sudo: required
+    - python: 3.7
+      os: linux
+      sudo: required
       services:
         - docker
-      env:
-        - CIBW_SKIP=*manylinux1_i686*
-        - PIP=pip
-        - PYTHON=python
-    - sudo: required
-      services:
-        - docker
-      env:
-        - CIBW_SKIP=*manylinux1_x86_64*
-        - PIP=pip
-        - PYTHON=python
-    - os: osx
-      language: generic
-      env:
-        - PIP=pip2
-        - PYTHON=python2
-
-env:
-  global:
-    - TWINE_USERNAME=benfred
-      # Note: TWINE_PASSWORD is set in Travis settings
 
 script:
-  - $PIP install cibuildwheel setuptools_rust
-  - export CIBW_BEFORE_BUILD='pip install setuptools-rust && source {project}/ci/install_rust.sh'
-  - export CIBW_SKIP=cp27-*\ cp33-*\ cp34-*\ $CIBW_SKIP
-  - export CIBW_ENVIRONMENT='PATH="$HOME/.cargo/bin:$PATH"'
-  - cibuildwheel --output-dir wheelhouse
+  - mkdir -p $HOME/rust-installer
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o $HOME/rust-installer/rustup.sh
+  - sh ~/rust-installer/rustup.sh -y
+  - pip install maturin pytest
+  - source $HOME/.cargo/env
+  - cargo build
+  - cargo test
+  - maturin develop
+  - pytest
+  - PYVER=$(python -c 'import sys; print("python{}.{}".format(*sys.version_info[:2]))')
+  - echo $PYVER
+  - maturin build --interpreter $PYVER
   - |
-    if [[ $TRAVIS_TAG ]]; then
-      $PIP install twine
-      $PYTHON -m twine upload wheelhouse/*.whl
+    if [[ $TRAVIS_TAG ]] && [ -n "$PYPI_TOKEN" ]; then
+       docker run --rm -v $(pwd):/io konstin2/maturin publish --no-sdist --username __token__ --password "$PYPI_TOKEN"
     fi

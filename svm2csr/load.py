@@ -5,7 +5,7 @@ SVMlight loading API.
 import numpy as np
 import scipy.sparse as sps
 
-import py_svm2csr_rs
+from .svm2csr import rs_load
 
 def load_svmlight_file(fname):
     """
@@ -13,7 +13,7 @@ def load_svmlight_file(fname):
 
     fname (str): the file name of the file to load.
     """
-    data, indices, indptr = py_svm2csr_rs.load(fname)
+    data, indices, indptr = rs_load(fname)
     print(data, indices, indptr)
 
     data = np.frombuffer(data, dtype=np.float64)
