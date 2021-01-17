@@ -24,6 +24,10 @@ from svm2csr import load
 pip install svm2csr
 ```
 
+Note this package is only available for pythons, operating systems, and machine architecture targets I can build wheels for. Right now, that makes it linux-only.
+
+* `cp36-cp39, manylinux2010, x86_64`
+
 # Unsupported Features
 
 * `dtype` (currently only doubles supported)
@@ -37,7 +41,8 @@ pip install svm2csr
 * writing SVMlight files
 * `n_features` option
 * `zero_based` option
-* windows, mac, and non-Travis-default python wheels
+* graceful client `multiprocessing`
+* mac and windows wheels
 
 All of these are fixable (even stream reading with parallel bridge). Let me know if you'd like to make PR.
 
@@ -61,9 +66,15 @@ maturin develop # create py bindings for rust code
 pytest # test python bindings
 ```
 
-TODO cool little travis build bubbles
-
 [![travis build](https://travis-ci.org/vlad17/svm2csr.svg?branch=master](https://travis-ci.org/vlad17/svm2csr)
 
+# Publishing
 
+Maturin doesn't prepare a `setup.py` when publishing. For this reason, a source distribution doesn't make sense, as a client machine's `pip` would not know how to install this package. For this reason, only wheels are published.
 
+A new set of wheels can be built and published for supported OSes and pythons with the following steps for a repository administrator:
+
+1. Fetch the most recent master.
+1. Bump the version in `Cargo.toml` appropriately if needed (else wheel names will clash with previous ones in pypi, though PRs should be bumping this already). Commit these changes.
+1. Tag the release. `git tag -a -m "v<CURRENT VERSION>"`
+1. Push to github, triggering a Travis build that tests, packages, and uploads to pypi. `git push --follow-tags`

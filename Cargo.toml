@@ -1,11 +1,11 @@
 [package]
-name = "svm2csr_rs"
-version = "0.0.1"
+name = "svm2csr"
+version = "0.0.2"
 authors = ["Vladimir Feinberg <vladimir.feinberg@gmail.com>"]
 edition = "2018"
 
 [lib]
-name = "py_svm2csr_rs"
+name = "svm2csr"
 crate-type = ["cdylib"]
 
 [dependencies]
