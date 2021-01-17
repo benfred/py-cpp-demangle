@@ -27,7 +27,7 @@ env:
       # Note: TWINE_PASSWORD is set in Travis settings, but only for master
 
 script:
-  - curl -sL https://static.rust-lang.org/rustup.sh -o ~/rust-installer/rustup.sh
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o ~/rust-installer/rustup.sh
   - sh ~/rust-installer/rustup.sh -y
   - pip install maturin pytest
   - source $HOME/.cargo/env
