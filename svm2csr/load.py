@@ -26,8 +26,11 @@ def load_svmlight_file(fname, zero_based="auto", min_chunk_size=(16 * 1024)):
     indices = np.frombuffer(indices, dtype=np.uint64)
     indptr = np.frombuffer(indptr, dtype=np.uint64)
 
+    assert indptr.size
+    assert len(y) == len(indptr) - 1
+
     if not indices.size:
-        return sps.csr_matrix((0, 0), dtype=np.float64), y
+        return sps.csr_matrix((len(indptr) - 1, 0), dtype=np.float64), y
 
     if not zero_based or (zero_based == "auto" and indices.min() > 0):
         indices -= 1

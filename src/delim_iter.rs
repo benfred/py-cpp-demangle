@@ -1,5 +1,7 @@
 //! A delimited iterator over bytes.
 
+use std::iter::FusedIterator;
+
 use memchr;
 
 /// An iterator over byte slices separated by a delimiter.
@@ -22,6 +24,8 @@ impl<'a> DelimIter<'a> {
         }
     }
 }
+
+impl<'a> FusedIterator for DelimIter<'a> {}
 
 impl<'a> Iterator for DelimIter<'a> {
     type Item = &'a [u8];

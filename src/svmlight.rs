@@ -41,6 +41,7 @@ pub fn svmlight_to_csr(fname: &Path, min_chunk_size: usize) -> CsrMatrix {
                     acc.indices.push(feature);
                     acc.data.push(value);
                 });
+                assert!(acc.indices[start..].windows(2).all(|s| s[0] < s[1]));
                 acc.indptr.push(start.try_into().unwrap());
                 acc
             })
@@ -74,7 +75,7 @@ pub fn svmlight_to_csr(fname: &Path, min_chunk_size: usize) -> CsrMatrix {
         .indptr
         .last()
         .iter()
-        .all(|&&i| i <= stacked.indptr.len().try_into().unwrap()));
+        .all(|&&i| i <= stacked.indices.len().try_into().unwrap()));
     stacked
         .indptr
         .push(stacked.indices.len().try_into().unwrap());
@@ -100,17 +101,21 @@ impl<'a> Iterator for SvmlightLineIter<'a> {
     type Item = (u64, f64);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next().map(|word| {
+        while let Some(word) = self.iter.next() {
+            if word.is_empty() {
+                continue;
+            }
             let string = str::from_utf8(word).expect("utf-8");
             let (feature, value) = string
                 .rfind(':')
                 .map(|pos| (&string[..pos], &string[pos + 1..]))
                 .expect("feature-value pair");
-            (
+            return Some((
                 feature.parse().expect("parse feature"),
                 value.parse().expect("parse value"),
-            )
-        })
+            ));
+        }
+        None
     }
 }
 
