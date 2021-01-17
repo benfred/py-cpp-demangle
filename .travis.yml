@@ -28,7 +28,7 @@ env:
 
 script:
   - mkdir -p $HOME/rust-installer
-  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o ~/rust-installer/rustup.sh
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o $HOME/rust-installer/rustup.sh
   - sh ~/rust-installer/rustup.sh -y
   - pip install maturin pytest
   - source $HOME/.cargo/env
