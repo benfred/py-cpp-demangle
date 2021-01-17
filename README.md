@@ -37,7 +37,7 @@ pip install svm2csr
 * writing SVMlight files
 * `n_features` option
 * `zero_based` option
-* windows and non-Travis-default python wheels
+* windows, mac, and non-Travis-default python wheels
 
 All of these are fixable (even stream reading with parallel bridge). Let me know if you'd like to make PR.
 
@@ -63,10 +63,7 @@ pytest # test python bindings
 
 TODO cool little travis build bubbles
 
-.. image:: https://travis-ci.org/benfred/py-cpp-demangle.svg?branch=master
-    :target: https://travis-ci.org/benfred/py-cpp-demangle
-.. image:: https://ci.appveyor.com/api/projects/status/bh3usbvstog4x42x/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/benfred/py-cpp-demangle
+[![travis build](https://travis-ci.org/vlad17/svm2csr.svg?branch=master](https://travis-ci.org/vlad17/svm2csr)
 
 
 
