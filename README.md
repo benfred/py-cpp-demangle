@@ -1,6 +1,6 @@
 # `svm2csr`: convert svmlight files into CSR representation
 
-Many sparse datasets are distributed in a lightweight text format called [svmlight](http://svmlight.joachims.org/). While simple and familiar, it's terribly slow to read in python even with C++ solutions.
+Many sparse datasets are distributed in a lightweight text format called [svmlight](http://svmlight.joachims.org/). While simple and familiar, it's terribly slow to read in python even with C++ solutions. Note this is Python 3.5+.
 
 ```
 from sklearn.datasets import load_svmlight_file
@@ -37,7 +37,7 @@ pip install svm2csr
 * writing SVMlight files
 * `n_features` option
 * `zero_based` option
-* windows builds
+* windows and non-Travis-default python wheels
 
 All of these are fixable (even stream reading with parallel bridge). Let me know if you'd like to make PR.
 
@@ -60,8 +60,6 @@ cargo test # test rust only
 maturin develop # create py bindings for rust code
 pytest # test python bindings
 ```
-
-
 
 TODO cool little travis build bubbles
 

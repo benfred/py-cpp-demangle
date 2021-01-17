@@ -7,10 +7,13 @@ jobs:
         - docker
     - os: osx
       language: generic
-      env:
-        - CIBW_SKIP=""
 
 script:
+  - |
+    if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      # https://github.com/PyO3/maturin/commit/08e04985c51a549b2364738b65ce07b073fcb3da#diff-6ac3f79fc25d95cd1e3d51da53a4b21b939437392578a35ae8cd6d5366ca5485L70
+      python3 -m pip install -U cffi virtualenv	
+    fi
   - mkdir -p $HOME/rust-installer
   - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o $HOME/rust-installer/rustup.sh
   - sh ~/rust-installer/rustup.sh -y
