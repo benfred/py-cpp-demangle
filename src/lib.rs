@@ -1,3 +1,4 @@
+mod fileblocks;
 mod svmlight;
 
 use byte_slice_cast::AsByteSlice;
