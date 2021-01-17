@@ -16,6 +16,7 @@ version = "0.13"
 features = ["extension-module"]
 
 [package.metadata.maturin]
+# keep consistent with requirements.txt
 requires-dist = ["numpy>=0.16", "scipy>=1.5", "scikit-learn>=0.22"]
 maintainer = "Vladimir Feinberg"
 maintainer-email = "vladimir.feinberg@gmail.com"
