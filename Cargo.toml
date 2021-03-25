@@ -9,8 +9,8 @@ name = "py_cpp_demangle"
 crate-type = ["cdylib"]
 
 [dependencies]
-cpp_demangle = "0.2.12"
+cpp_demangle = "0.3.2"
 
 [dependencies.pyo3]
-version = "0.7"
+version = "0.13"
 features = ["extension-module"]
