@@ -32,7 +32,7 @@ fn cpp_demangle(_py: Python, m: &PyModule) -> PyResult<()> {
             Ok(sym) => Ok(sym.to_string()),
 
             // on an error, this will raise a python ValueError exception!
-            Err(error) => return Err(exceptions::ValueError::py_err(error.to_string()))
+            Err(error) => return Err(exceptions::PyValueError::new_err(error.to_string()))
         }
     }
 
