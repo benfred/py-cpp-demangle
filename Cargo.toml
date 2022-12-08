@@ -2,15 +2,15 @@
 name = "py_cpp_demangle"
 version = "0.1.0"
 authors = ["Ben Frederickson <github@benfrederickson.com>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
-name = "py_cpp_demangle"
+name = "cpp_demangle"
 crate-type = ["cdylib"]
 
 [dependencies]
-cpp_demangle = "0.2.12"
+cpp_demangle = "0.4.0"
 
 [dependencies.pyo3]
-version = "0.7"
+version = "0.17.3"
 features = ["extension-module"]
