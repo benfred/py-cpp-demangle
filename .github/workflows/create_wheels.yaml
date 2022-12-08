@@ -1,0 +1,43 @@
+name: create-wheels
+
+on: [push]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, windows-latest]
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: install rust setuptools
+        run: pip install setuptools_rust
+
+      - name: install cpp_demangle
+        run: pip install .
+
+      - name: test step
+        run: python setup.py test
+
+      - name: create wheel
+        run: |
+          pip install setuptools wheel twine
+          python setup.py bdist_wheel
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cpp_demangle_wheel
+          path: dist/*
