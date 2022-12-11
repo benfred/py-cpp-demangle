@@ -3,5 +3,5 @@ if [ ! -d ~/rust-installer ]; then
     curl -sL https://static.rust-lang.org/rustup.sh -o ~/rust-installer/rustup.sh
     sh ~/rust-installer/rustup.sh -y
     source $HOME/.cargo/env
-    rustup default nightly
+    rustup default stable
 fi
