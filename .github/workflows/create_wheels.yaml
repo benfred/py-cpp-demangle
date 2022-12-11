@@ -1,43 +1,97 @@
-name: create-wheels
+name: Build
 
-on: [push]
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    tags:
+      - v*
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  test:
+  build-wheels:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        platform: [ubuntu-latest, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-    runs-on: ${{ matrix.platform }}
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        python-version: [37, 38, 39, 310, 311]
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          platforms: all
 
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
 
-      - name: install rust setuptools
-        run: pip install setuptools_rust
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.11.3
+        env:
+          CIBW_BUILD: cp${{matrix.python-version}}-*
+          CIBW_ENVIRONMENT: 'PATH="$HOME/.cargo/bin:$PATH" CARGO_TERM_COLOR="always"'
+          CIBW_ENVIRONMENT_WINDOWS: 'PATH="$UserProfile\.cargo\bin;$PATH"'
 
-      - name: install cpp_demangle
-        run: pip install .
-
-      - name: test step
-        run: python setup.py test
-
-      - name: create wheel
-        run: |
-          pip install setuptools wheel twine
-          python setup.py bdist_wheel
-
-      - uses: actions/upload-artifact@v3
+      - name: Upload Binaries
+        uses: actions/upload-artifact@v3
         with:
-          name: cpp_demangle_wheel
-          path: dist/*
+          name: wheels
+          path: wheelhouse
+
+  test-wheels:
+    needs: [build-wheels]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        path: py_cpp_demangle_source
+    - uses: actions/download-artifact@v3
+      with:
+        name: wheels
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install wheel
+      run: |
+        pip install --force-reinstall --no-deps --no-index --find-links . cpp-demangle
+    - name: Run unittests
+      run: |
+        python -m unittest discover py_cpp_demangle_source/tests
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs: [test-wheels]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: wheels
+      - name: Create GitHub Release
+        uses: fnkr/github-action-ghr@v1.3
+        env:
+          GHR_PATH: .
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Push to PyPi
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          pip install --upgrade wheel pip setuptools twine
+          twine upload *
+          rm *

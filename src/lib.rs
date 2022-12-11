@@ -1,7 +1,8 @@
 use pyo3::prelude::*;
-use pyo3::exceptions::PyValueError;
+use pyo3::exceptions;
 
-mod alias_cpp_demangle;
+
+
 // This defines a python module. pyo3 will copy the rust doc comment
 // below into a python docstring
 
@@ -22,23 +23,20 @@ mod alias_cpp_demangle;
 /// Traceback (most recent call last):
 /// ...
 /// ValueError: mangled symbol is not well-formed
-
-#[pyfunction]
-fn demangle(mangled: String) -> PyResult<String> {
-    match alias_cpp_demangle::cxx_demangle::Symbol::new(&mangled[..]) {
-        // Return the output as a string to Python
-        Ok(sym) => Ok(sym.to_string()),
-
-        // on an error, this will raise a python ValueError exception!
-        Err(error) => return Err(PyValueError::new_err(error.to_string()))
-    }
-}
-
-// This adds a function to the python module:
-/// Demangles a mangled c++ linker symbol name and returns it as a string
 #[pymodule]
-fn cpp_demangle(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn cpp_demangle(_py: Python, m: &PyModule) -> PyResult<()> {
+    // This adds a function to the python module:
+    /// Demangles a mangled c++ linker symbol name and returns it as a string
+    #[pyfn(m)]
+    fn demangle(mangled: String) -> PyResult<String> {
+        match ::cpp_demangle::Symbol::new(&mangled[..]) {
+            // Return the output as a string to Python
+            Ok(sym) => Ok(sym.to_string()),
 
-    m.add_function(wrap_pyfunction!(demangle, m)?)?;
+            // on an error, this will raise a python ValueError exception!
+            Err(error) => return Err(exceptions::PyValueError::new_err(error.to_string()))
+        }
+    }
+
     Ok(())
 }
