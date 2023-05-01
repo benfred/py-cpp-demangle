@@ -22,20 +22,24 @@ use pyo3::exceptions;
 /// >>> demangle('invalid c++ symbol')
 /// Traceback (most recent call last):
 /// ...
-/// ValueError: mangled symbol is not well-formed
+/// ValueError: ('Could not demangle symbol', 'mangled symbol is not well-formed')
 #[pymodule]
 fn cpp_demangle(_py: Python, m: &PyModule) -> PyResult<()> {
     // This adds a function to the python module:
     /// Demangles a mangled c++ linker symbol name and returns it as a string
     #[pyfn(m)]
     fn demangle(mangled: String) -> PyResult<String> {
-        match ::cpp_demangle::Symbol::new(&mangled[..]) {
-            // Return the output as a string to Python
-            Ok(sym) => Ok(sym.to_string()),
+        let symbol = ::cpp_demangle::Symbol::new(&mangled[..]).map_err(|error| {
+            exceptions::PyValueError::new_err(("Could not demangle symbol", error.to_string()))
+        })?;
+        let demangled = symbol.demangle(&Default::default()).map_err(|error| {
+            exceptions::PyValueError::new_err((
+                "Could not format demangled name as string",
+                error.to_string(),
+            ))
+        })?;
 
-            // on an error, this will raise a python ValueError exception!
-            Err(error) => return Err(exceptions::PyValueError::new_err(error.to_string()))
-        }
+        Ok(demangled)
     }
 
     Ok(())
