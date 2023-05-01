@@ -1,6 +1,6 @@
 [package]
 name = "py_cpp_demangle"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Ben Frederickson <github@benfrederickson.com>"]
 edition = "2021"
 
