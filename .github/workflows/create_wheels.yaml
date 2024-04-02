@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: [37, 38, 39, 310, 311]
+        python-version: [37, 38, 39, 310, 311, 312]
 
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
           toolchain: stable
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.3
+        uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_BUILD: cp${{matrix.python-version}}-*
           CIBW_ENVIRONMENT: 'PATH="$HOME/.cargo/bin:$PATH" CARGO_TERM_COLOR="always"'
@@ -49,7 +49,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11', '3.12']
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
