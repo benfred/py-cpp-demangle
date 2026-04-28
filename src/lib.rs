@@ -1,6 +1,4 @@
 use pyo3::prelude::*;
-use pyo3::exceptions;
-
 
 
 // This defines a python module. pyo3 will copy the rust doc comment
@@ -24,15 +22,18 @@ use pyo3::exceptions;
 /// ...
 /// ValueError: ('Could not demangle symbol', 'mangled symbol is not well-formed')
 #[pymodule]
-fn cpp_demangle(_py: Python, m: &PyModule) -> PyResult<()> {
+mod cpp_demangle {
+    use pyo3::prelude::*;
+    use pyo3::exceptions;
+
     // This adds a function to the python module:
     /// Demangles a mangled c++ linker symbol name and returns it as a string
-    #[pyfn(m)]
+    #[pyfunction]
     fn demangle(mangled: String) -> PyResult<String> {
         let symbol = ::cpp_demangle::Symbol::new(&mangled[..]).map_err(|error| {
             exceptions::PyValueError::new_err(("Could not demangle symbol", error.to_string()))
         })?;
-        let demangled = symbol.demangle(&Default::default()).map_err(|error| {
+        let demangled = symbol.demangle().map_err(|error| {
             exceptions::PyValueError::new_err((
                 "Could not format demangled name as string",
                 error.to_string(),
@@ -41,6 +42,4 @@ fn cpp_demangle(_py: Python, m: &PyModule) -> PyResult<()> {
 
         Ok(demangled)
     }
-
-    Ok(())
 }
