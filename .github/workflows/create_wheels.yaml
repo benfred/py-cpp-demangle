@@ -15,10 +15,9 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: [37, 38, 39, 310, 311]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up QEMU
         if: runner.os == 'Linux'
@@ -26,22 +25,17 @@ jobs:
         with:
           platforms: all
 
-      - name: Setup rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.3
+        uses: pypa/cibuildwheel@v3.0.0
         env:
-          CIBW_BUILD: cp${{matrix.python-version}}-*
+          CIBW_BUILD: cp38-*
           CIBW_ENVIRONMENT: 'PATH="$HOME/.cargo/bin:$PATH" CARGO_TERM_COLOR="always"'
           CIBW_ENVIRONMENT_WINDOWS: 'PATH="$UserProfile\.cargo\bin;$PATH"'
 
       - name: Upload Binaries
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-${{ matrix.os }}
           path: wheelhouse
 
   test-wheels:
@@ -49,20 +43,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         path: py_cpp_demangle_source
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
-        name: wheels
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+        name: wheels-${{ matrix.os }}
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.x
     - name: Install wheel
       run: |
         pip install --force-reinstall --no-deps --no-index --find-links . cpp-demangle
@@ -76,17 +69,18 @@ jobs:
     if: "startsWith(github.ref, 'refs/tags/')"
     needs: [test-wheels]
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: wheels
+          pattern: wheels-*
+          merge-multiple: true
       - name: Create GitHub Release
         uses: fnkr/github-action-ghr@v1.3
         env:
           GHR_PATH: .
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.x
       - name: Push to PyPi
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}

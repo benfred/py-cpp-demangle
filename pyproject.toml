@@ -2,10 +2,10 @@
 # skip testing in the cibuildwheel phase, will install the wheels later
 # and verify
 test-command = ""
-skip = ["pp*", "*musl*",  "*-manylinux_i686", "*win32"]
+skip = ["*musl*",  "*-manylinux_i686", "*win32"]
 
-[tool.cibuildwheel.macos]
-archs = ["x86_64"]
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.12"
 
 [build-system]
 requires = [
