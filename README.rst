@@ -1,8 +1,8 @@
 py-cpp-demangle: Demangles C++ linker symbols
 ============================================================
 
-.. image:: https://github.com/benfred/py-cpp-demangle/workflows/Build/badge.svg?branch=master
-    :target: https://github.com/benfred/py-cpp-demangle/actions?query=branch%3Amaster
+.. image:: https://github.com/benfred/py-cpp-demangle/workflows/Build/badge.svg?branch=main
+    :target: https://github.com/benfred/py-cpp-demangle/actions?query=branch%3Amain
 
 A package for demangling C++ linker symbol strings
 
